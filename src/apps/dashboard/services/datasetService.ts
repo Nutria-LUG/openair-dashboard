@@ -1,7 +1,7 @@
 import { IChartDataset } from "@/interfaces";
 
 export class DatasetService {
-  public static datasetsUrl: string = "http://79.137.82.143:8080/get_last";
+  public static datasetsUrl: string = "http://79.137.82.143/get_last";
   public static getAllDatasets(): Promise<IChartDataset[]> {
     return fetch(DatasetService.datasetsUrl)
       .then(response => response.json())
@@ -20,8 +20,7 @@ export class DatasetService {
             };
           datasets_obj[sensor].data.push({
             x: survey["timestamp"],
-            y: survey["value"],
-            r: survey["value"] / 2
+            y: survey["value"]
           });
         }
         for (const key in datasets_obj) datasets.push(datasets_obj[key]);

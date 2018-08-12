@@ -4,11 +4,12 @@ export interface IChartDataset {
   backgroundColor?: string | string[];
   borderColor?: string | string[];
   borderWidth?: number;
+  type?: string;
 }
 
 export interface IChartData {
-  labels: string[];
   datasets: IChartDataset[];
+  labels?: string[];
 }
 
 export interface IChartOptions {

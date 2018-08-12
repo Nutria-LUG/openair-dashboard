@@ -1,8 +1,6 @@
 <template>
   <div id="app">
-  <div id="header">
     <Header />
-  </div>
   <div id="content">
     <router-view />
   </div>
@@ -19,15 +17,25 @@ import Header from "@/views/_Header.vue";
 export default class extends Vue {}
 </script>
 
-
 <style lang="scss">
+html,
+body,
+#app {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
 #app {
   display: flex;
   flex-flow: column;
-}
-#header {
+  color: #ddd;
 }
 #content {
   flex-grow: 1;
+  padding: 0 2em;
+  background-color: #333;
 }
 </style>
