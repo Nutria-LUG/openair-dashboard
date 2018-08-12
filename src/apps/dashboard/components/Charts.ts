@@ -1,13 +1,22 @@
 import Charts from "vue-chartjs";
 
-export const Chart = {
+interface IChart {
+  mixins: any[];
+  props: string[];
+  chartData?: any;
+  options?: any;
+  mounted(): void;
+  renderChart?: (chartData: any, options: any) => void;
+}
+
+export const Chart: IChart = {
   mixins: [
     Charts.mixins.reactiveProp
     // Charts.mixins.reactiveData
   ],
   props: ["chartData", "options"],
   mounted() {
-    this.renderChart(this.chartData, this.options);
+    this.renderChart && this.renderChart(this.chartData, this.options);
   }
 };
 
