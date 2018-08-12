@@ -1,7 +1,7 @@
 import { IChartDataset } from "@/interfaces";
 
 export class DatasetService {
-  public static datasetsUrl: string = "http://79.137.82.143/get_last";
+  public static datasetsUrl: string = "http://79.137.82.143:8080/get_last";
   public static getAllDatasets(): Promise<IChartDataset[]> {
     return fetch(DatasetService.datasetsUrl)
       .then(response => response.json())
