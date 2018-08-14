@@ -1,6 +1,6 @@
 import { IChartDataset } from '@/interfaces';
 
-const DATASET_URL = 'http://127.0.0.1:8000/openair/all-datasets';
+const DATASET_URL = 'http://79.137.82.143:8080/openair/all-datasets';
 
 function convertTimestamp(timestamp: number): string {
     const date = new Date(timestamp * 1000);
