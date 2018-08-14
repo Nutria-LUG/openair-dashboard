@@ -114,7 +114,7 @@ export default class extends Vue {
       case 'PolarArea':
       case 'Radar':
       case 'Scatter':
-        overwrite_colors = true;
+        overwriteColors = true;
         for (let item of dataset.data) { if (item) { item = item.y; } }
         break;
       case 'Bubble':
