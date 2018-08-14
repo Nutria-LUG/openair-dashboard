@@ -3,23 +3,25 @@
     <h1>Dashboard</h1>
     <div v-if="!datasets.length">Loading...</div>
     <div id="charts" v-if="datasets.length">
+      <Bar class="chart" :chartData="getChartData(['Umidity'], 'Bar')" :options="options" />
+      <LineChart class="chart" :chartData="getChartData(['PM2.5'], 'Line')" :options="options" />
       <Bar class="chart" :chartData="getChartData(['Temperature'], 'Bar')" :options="options" />
       <!-- <HorizontalBar class="chart" :chartData="getChartData(['PM10'], 'HorizontalBar')" :options="options" /> -->
-      <LineChart class="chart" :chartData="getChartData(['PM2.5'], 'Line')" :options="options" />
+
       <!-- <Doughnut class="chart" :chartData="getChartData(['Temperature'], 'Doughnut')" :options="options" /> -->
       <!-- <Pie class="chart" :chartData="getChartData(['Umidity'], 'Pie')" :options="options" /> -->
       <!-- <Radar class="chart" :chartData="getChartData(['Pressure'], 'Radar')" :options="options" /> -->
       <!-- <PolarArea class="chart" :chartData="getChartData(['PM10'], 'PolarArea')" :options="options" /> -->
-      <Bubble class="chart" :chartData="getChartData(['PM10'], 'Bubble')" :options="options" />
-      <Scatter class="chart" :chartData="getChartData(['Umidity'], 'Scatter')" :options="options" />
+      <LineChart class="chart" :chartData="getChartData(['PM10'], 'Line')" :options="options" />
+      
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { IChartData, IChartDataset, IChartOptions } from "./interfaces";
-import { Component, Vue } from "vue-property-decorator";
-import { Action, Getter } from "vuex-class";
+import { IChartData, IChartDataset, IChartOptions } from './interfaces';
+import { Component, Vue } from 'vue-property-decorator';
+import { Action, Getter } from 'vuex-class';
 import {
   Bar,
   HorizontalBar,
@@ -29,14 +31,14 @@ import {
   Radar,
   PolarArea,
   Bubble,
-  Scatter
-} from "./components";
-import { setInterval } from "timers";
+  Scatter,
+} from './components';
+import { setInterval } from 'timers';
 
 function generateRandomColor() {
   const rgb = [];
-  for (var i = 0; i < 3; ++i) rgb.push(Math.floor(Math.random() * 255));
-  return `rgb(${rgb.join(",")}, .5)`;
+  for (let i = 0; i < 3; ++i) { rgb.push(Math.floor(Math.random() * 255)); }
+  return `rgb(${rgb.join(',')}, .5)`;
 }
 
 @Component({
@@ -49,14 +51,17 @@ function generateRandomColor() {
     Radar,
     PolarArea,
     Bubble,
-    Scatter
-  }
+    Scatter,
+  },
 })
 export default class extends Vue {
-  @Action updateDataset: () => void;
-  @Getter datasets: IChartDataset[];
+  @Action public updateDataset: () => void;
+  @Getter public datasets: IChartDataset[];
 
-  mounted() {
+  public options: IChartOptions = {
+    responsive: false,
+  };
+  public mounted() {
     this.updateDataset();
     const interval = setInterval(this.updateDataset, 5000);
   }
@@ -64,61 +69,63 @@ export default class extends Vue {
   get chartData(): IChartData {
     return {
       labels: [],
-      datasets: this.datasets
+      datasets: this.datasets,
     };
   }
-  options: IChartOptions = {
-    responsive: false
-  };
 
-  getChartData(names: string[], widget: string): IChartData {
-    const datasets = this.datasets.filter(a => names.indexOf(a.label) >= 0);
+  public getChartData(names: string[], widget: string): IChartData {
+    const datasets = this.datasets.filter((a) => names.indexOf(a.label) >= 0);
     const labels = this.generateLabels(datasets);
-    const overwrite_colors = names.length === 1 ? true : false;
-    for (const dataset of datasets)
-      this.convertDatasetByWidget(dataset, widget, overwrite_colors);
+    const overwriteColors = names.length === 1;
+    for (const dataset of datasets) {
+      this.convertDatasetByWidget(dataset, widget, overwriteColors);
+    }
     return {
       labels,
-      datasets
+      datasets,
     };
   }
 
-  generateLabels(datasets: IChartDataset[]): string[] {
+  public generateLabels(datasets: IChartDataset[]): string[] {
     const labels: string[] = [];
-    if (datasets.length === 1)
-      for (const item of datasets[0].data)
-        if (item) labels.push(this.convertTimestamp(item["x"]));
+    if (datasets.length === 1) {
+      for (const item of datasets[0].data) {
+        if (item) {
+           labels.push(this.convertTimestamp(item.x));
+        }
+    }
+      }
     return labels;
   }
 
-  convertTimestamp(timestamp: number): string {
+  public convertTimestamp(timestamp: number): string {
     const date = new Date(timestamp * 1000);
     return date.toLocaleString();
-    // return `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`;
-  }
+}
 
-  convertDatasetByWidget(
+  public convertDatasetByWidget(
     dataset: IChartDataset,
     widget: string,
-    overwrite_colors?: boolean
+    overwriteColors?: boolean,
   ): void {
     switch (widget) {
-      case "Doughnut":
-      case "Pie":
-      case "PolarArea":
-      case "Radar":
+      case 'Doughnut':
+      case 'Pie':
+      case 'PolarArea':
+      case 'Radar':
+      case 'Scatter':
         overwrite_colors = true;
-        for (let item of dataset.data) if (item) item = item["y"];
+        for (let item of dataset.data) { if (item) { item = item.y; } }
         break;
-      case "Bubble":
-        for (const item of dataset.data) if (item) item["r"] = item["y"];
+      case 'Bubble':
+        for (const item of dataset.data) { if (item) { item.r = item.y; } }
         break;
     }
-    if (overwrite_colors) {
-      const colors: string[] = [];
-      for (const item of dataset.data) colors.push(generateRandomColor());
-      dataset.backgroundColor = colors;
-    }
+//    if (overwriteColors) {
+//      const colors: string[] = [];
+//      for (const item of dataset.data) colors.push(generateRandomColor());
+//      dataset.backgroundColor = colors;
+//    }
     // dataset.type = widget;
   }
 }
